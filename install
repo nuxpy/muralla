@@ -14,7 +14,7 @@ def main():
     ele = {
         'config': ['etc/muralla', 'muralla.conf'],
         'start_up': [muralla_up, 'muralla-up'],
-        'sbin': ['usr/sbin', 'muralla'],
+        'sbin': ['usr/local/sbin', 'muralla'],
         'man5': ['usr/share/man/man5', 'muralla.conf.5.gz'],
         'man8': ['usr/share/man/man8', 'muralla.8.gz'],
         'man5_es': ['usr/share/man/es/man5', 'muralla.conf.5.gz'],

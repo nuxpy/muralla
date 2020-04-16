@@ -1,0 +1,199 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+''' Desarrollado por: Félix Urbina
+    Creación 05/02/2019 - Félix Urbina
+    Última revisión 13/02/2019 - Félix Urbina
+    Última revisión 02/03/2019 - Félix Urbina
+    Última revisión 01/07/2019 - Félix Urbina
+    Última revisión 07/07/2019 - Félix Urbina
+    Última revisión 09/07/2019 - Félix Urbina
+    Última revisión 25/07/2019 - Félix Urbina
+'''
+import os
+import sys
+import re
+import json
+import platform
+
+def get_chain(c=''):
+    if re.match(r'.*input.*', c, re.I):
+        return 'INPUT'
+    elif re.match(r'.*forward.*', c, re.I):
+        return 'FORWARD'
+    elif re.match(r'.*output.*', c, re.I):
+        return 'OUTPUT'
+    else:
+        print ("There is a problem with the chain, it's not exists.")
+    return False
+
+def get_target(t=''):
+    if re.match(r'.*accept.*', t, re.I):
+        return 'ACCEPT'
+    elif re.match(r'.*drop.*', t, re.I):
+        return 'DROP'
+    elif re.match(r'.*return.*', t, re.I):
+        return 'RETURN'
+    else:
+        print ("There is a problem with the target, it's not exists.")
+    return False
+
+def get_table(t=''):
+    if re.match(r'.*filter.*', t, re.I):
+        return 'filter'
+    elif re.match(r'.*nat.*', t, re.I):
+        return 'nat'
+    elif re.match('mangle', t, re.I):
+        return 'mangle'
+    elif re.match('raw', t, re.I):
+        return 'raw'
+    elif re.match('security', t, re.I):
+        return 'security'
+    else:
+        print ("There is a problem with the table, it's not exists.")
+    return False
+
+def clean_rules():
+    global cmd_iptables
+    clean = ['X','Z','F']
+    chains = ['INPUT','FORWARD','OUTPUT']
+    for p in clean:
+        os.system('%s -%s' % (cmd_iptables,p))
+    for c in chains:
+        os.system('%s -P %s ACCEPT' % (cmd_iptables,c))
+    return True
+
+def list_rules():
+    global cmd_iptables
+    return os.system('%s -L -v' % cmd_iptables)
+
+def make_rule(dict_rule={}):
+    rule = ''
+    if 'table' in dict_rule:
+        rule += ' -t %s ' % dict_rule['table']
+    if 'ip_src' in dict_rule:
+        if '!' not in dict_rule['ip_src']:
+            rule += ' -s %s ' % dict_rule['ip_src']
+        else:
+            rule += ' ! -s %s ' % dict_rule['ip_src'].replace('!','')
+    if 'ip_dst' in dict_rule:
+        if '!' not in dict_rule['ip_dst']:
+            rule += ' -d %s ' % dict_rule['ip_dst']
+        else:
+            rule += ' ! -d %s ' % dict_rule['ip_dst'].replace('!','')
+    if 'net_in' in dict_rule:
+        if '!' not in dict_rule['net_in']:
+            rule += ' -i %s ' % dict_rule['net_in']
+        else:
+            rule += ' ! -i %s ' % dict_rule['net_in'].replace('!','')
+    if 'net_out' in dict_rule:
+        if '!' not in dict_rule['net_out']:
+            rule += ' -o %s ' % dict_rule['net_out']
+        else:
+            rule += ' ! -o %s ' % dict_rule['net_out'].replace('!','')
+    if 'proto' in dict_rule:
+        if '!' not in dict_rule['proto']:
+            rule += ' -p %s ' % dict_rule['proto']
+        else:
+            rule += ' ! -p %s ' % dict_rule['proto'].replace('!','')
+    if 'port_src' in dict_rule:
+        rule += ' --sport %s ' % dict_rule['port_src']
+    if 'port_dst' in dict_rule:
+        rule += ' --dport %s ' % dict_rule['port_dst']
+    if 'frag' in dict_rule:
+        if '!' not in dict_rule['frag']:
+            rule += ' -f %s ' % dict_rule['frag']
+        else:
+            rule += ' ! -f %s ' % dict_rule['frag'].replace('!','')
+    if 'state' in dict_rule:
+        rule += ' -m state --state %s ' % dict_rule['state'].replace(' ','')
+    return rule
+
+def load_rules():
+    global cmd_iptables, config_file
+    ''' Make rules from config file
+    '''
+    content = ''
+    rules = {}
+    config_r = open(config_file,'r')
+    line = config_r.readline()
+    while len(line):
+        l = line.strip()
+        line = config_r.readline()
+        if not re.match(r'^(#|$|;)', l, re.I):
+            content += l.replace("'",'"')
+    config_r.close()
+    ''' Load rules
+    '''
+    try:
+        rules = json.loads(content)
+    except:
+        print ("There is a problem with the configuration file, check the format.")
+        return False
+    rule_list = []
+    if 'policy' not in rules:
+        print ("Must include policies in the configuration file.")
+        return False
+    for r in rules:
+        if 'policy' not in r:
+            for c in rules[r]:
+                target = get_target(r)
+                chain = get_chain(r)
+                rule_list.append('%s -A %s %s -j %s' % (cmd_iptables, chain, make_rule(c).strip(), target))
+        else:
+            for c in rules[r]:
+                target = get_target(rules[r][c])
+                chain = get_chain(c)
+                rule_list.append('%s -P %s %s' % (cmd_iptables, chain, target))
+    for r in rule_list:
+        os.system(r)
+    return True
+
+def uninstall():
+    dist = str(platform.linux_distribution()[0])
+    if re.search(r'.*debian.*', dist, re.I):
+        muralla_up = "etc/network/if-up.d"
+    elif re.search(r'.*ubuntu.*', dist, re.I):
+        muralla_up = "etc/network/if-up.d"
+    elif re.search(r'.*centos.*', dist, re.I):
+        muralla_up = "etc/sysconfig/network-scripts"
+    ele = {
+        'config': '/etc/muralla',
+        'start_up': '/%s/muralla-up' % muralla_up,
+        'sbin': '/usr/sbin/muralla',
+        'man5': 'usr/share/man/man5/muralla.conf.5.gz',
+        'man8': 'usr/share/man/man8/muralla.8.gz',
+        'man5_es': 'usr/share/man/es/man5/muralla.conf.5.gz',
+        'man8_es': 'usr/share/man/es/man8/muralla.8.gz'
+    }
+    for e in ele:
+        os.system('rm -rf /%s' % ele[e])
+    print ("Muralla was uninstalled.")
+    return True
+
+def main(opt):
+    if '-l' in opt:
+        list_rules()
+    elif '-c' in opt:
+        clean_rules()
+        load_rules()
+        list_rules()
+    elif '-d' in opt:
+        clean_rules()
+        list_rules()
+    elif '-u' in opt:
+        uninstall()
+    else:
+        print ("""\n Insert a valid argument such as:\n
+    muralla -l      List rules running as firewall.
+    muralla -c      Load rules of firewall.
+    muralla -d      Delete or clean all of rules.
+    muralla -h      Show this help.
+    muralla -u      Uninstall muralla.\n""")
+    return True
+
+if __name__ == '__main__':
+    ''' Global variables '''
+    cmd_iptables = 'iptables'
+    config_file = '/etc/muralla/muralla.conf'
+    opt = sys.argv[:] or []
+    main(opt)
