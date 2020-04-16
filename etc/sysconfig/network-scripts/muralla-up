@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# This script wake up rules for Iptables firewall
+#
+
+# Active to 1 if you need to load firewall on starting
+active = 1
+
+if [ $active == 1 ]; then
+    if [ -f /usr/sbin/muralla ]; then
+        /usr/sbin/muralla -c
+    fi
+fi
+
+exit 0

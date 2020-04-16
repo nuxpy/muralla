@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import os
+import re
+import platform
+def main():
+    dist = str(platform.linux_distribution()[0])
+    if re.search(r'.*debian.*', dist, re.I):
+        muralla_up = "etc/network/if-up.d"
+    elif re.search(r'.*ubuntu.*', dist, re.I):
+        muralla_up = "etc/network/if-up.d"
+    elif re.search(r'.*centos.*', dist, re.I):
+        muralla_up = "etc/sysconfig/network-scripts"
+    ele = {
+        'config': ['etc/muralla', 'muralla.conf'],
+        'start_up': [muralla_up, 'muralla-up'],
+        'sbin': ['usr/sbin', 'muralla'],
+        'man5': ['usr/share/man/man5', 'muralla.conf.5.gz'],
+        'man8': ['usr/share/man/man8', 'muralla.8.gz'],
+        'man5_es': ['usr/share/man/es/man5', 'muralla.conf.5.gz'],
+        'man8_es': ['usr/share/man/es/man8', 'muralla.8.gz']
+    }
+    for e in ele:
+        if not os.path.exists('/%s' % ele[e][0]):
+            newdir = '/%s' % ele[e][0]
+            os.system('mkdir /%s' % newdir)
+        os.system('cp %s/%s /%s/' % (ele[e][0], ele[e][1], ele[e][0]))
+        os.system('mandb -q')
+    print ("Muralla was installed, for more information use: muralla -h")
+    print ("Also you can use: apropos muralla")
+if __name__ == '__main__':
+    main()
