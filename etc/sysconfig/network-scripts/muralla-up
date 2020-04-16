@@ -7,8 +7,8 @@
 active = 1
 
 if [ $active == 1 ]; then
-    if [ -f /usr/sbin/muralla ]; then
-        /usr/sbin/muralla -c
+    if [ -f /usr/local/sbin/muralla ]; then
+        /usr/local/sbin/muralla -c
     fi
 fi
 
