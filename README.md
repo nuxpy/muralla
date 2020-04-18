@@ -7,9 +7,11 @@ El programa está totalmente abierto, se puede leer el código fuente sin proble
 
 <a href="https://wiki.nuxpy.com/index.php/Muralla">Sitio oficial del proyecto.</a>
 
-### Instalación y dependencia
+### Requiere
 
-En primera instancia tener instalado el programa: **man-db**
+* man-db
+
+### Instalación
 
 El contenido debería tener un árbol de archivos parecido al siguiente:
 
@@ -143,5 +145,6 @@ La desinstalación se realizan como usuario **root** y con el mismo comando base
 
     muralla -u
 
-### Autor
+Autor
+-----
 Félix Urbina
