@@ -1,7 +1,7 @@
 ### muralla
 
 Es un proyecto desarrollado con el lenguaje de programación python que pretende 
-facilitar la gestión de un firewall construido por Iptables como sistema base.
+facilitar la gestión de un firewall construido por _Iptables_ como sistema base.
 
 El programa está totalmente abierto, se puede leer el código fuente sin problemas.
 
@@ -40,7 +40,7 @@ El contenido debería tener un árbol de archivos parecido al siguiente:
                    └── man8
                        └── muralla.8.gz
 
-Se instala como usuario root de la siguiente manera:
+Se instala como usuario **root** de la siguiente manera:
 
     ./install
 
@@ -48,9 +48,9 @@ Se instala como usuario root de la siguiente manera:
 
 La ruta absoluta del archivo de configuración es: **/etc/muralla/muralla.conf**
 
-El contenido del archivo muralla.conf es parecido al formato de archivos Json, 
+El contenido del archivo muralla.conf es parecido al formato de archivos _Json_, 
 internamente la estructura aceptará comandos y parámetros relacionados con los 
-comandos y parámetros de Iptables.
+comandos y parámetros de _Iptables_.
 
 ### Ejemplos
 
@@ -114,7 +114,7 @@ Ejemplo rechazando conexiones de HTTP:
 
 ### Fichero muralla
 
-La ruta absoluta del archivo es: /usr/local/sbin/muralla
+La ruta absoluta del archivo es: **/usr/local/sbin/muralla**
 
 Este archivo es el script principal desde donde se lee el archivo de configuración, 
 se listan las reglas implementadas, se cargan y eliminan reglas y se ve la ayuda 
@@ -139,7 +139,7 @@ archivo _muralla.conf_ durante el arranque del sistema operativo.
 
 ### Deinstalación
 
-La desinstalación se realizan como usuario root y con el mismo comando base:
+La desinstalación se realizan como usuario **root** y con el mismo comando base:
 
     muralla -u
 
