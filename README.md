@@ -7,7 +7,7 @@ El programa está totalmente abierto, se puede leer el código fuente sin proble
 
 <a href="https://wiki.nuxpy.com/index.php/Muralla">Sitio oficial del proyecto.</a>
 
-### Instalación y depencidencia
+### Instalación y dependencia
 
 En primera instancia tener instalado el programa: **man-db**
 
