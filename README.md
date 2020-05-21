@@ -145,6 +145,5 @@ La desinstalación se realizan como usuario **root** y con el mismo comando base
 
     muralla -u
 
-Autor
------
+---
 Félix Urbina
