@@ -4,7 +4,7 @@
 #
 
 # Active to 1 if you need to load firewall on starting
-active = 1
+active=1
 
 if [ $active == 1 ]; then
     if [ -f /usr/local/sbin/muralla ]; then
