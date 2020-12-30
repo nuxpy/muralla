@@ -18,7 +18,8 @@ def main():
         'man5': ['usr/share/man/man5', 'muralla.conf.5.gz'],
         'man8': ['usr/share/man/man8', 'muralla.8.gz'],
         'man5_es': ['usr/share/man/es/man5', 'muralla.conf.5.gz'],
-        'man8_es': ['usr/share/man/es/man8', 'muralla.8.gz']
+        'man8_es': ['usr/share/man/es/man8', 'muralla.8.gz'],
+        'example': ['usr/share/muralla', 'muralla.example.conf']
     }
     for e in ele:
         if not os.path.exists('/%s' % ele[e][0]):
