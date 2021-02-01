@@ -7,12 +7,13 @@ def main():
     dist = str(platform.linux_distribution()[0])
     if re.search(r'.*debian.*', dist, re.I):
         muralla_up = "etc/network/if-up.d"
-        os.system('apt-get install man-db')
+        os.system('apt-get install man-db fail2ban')
     elif re.search(r'.*ubuntu.*', dist, re.I):
         muralla_up = "etc/network/if-up.d"
-        os.system('apt-get install man-db')
+        os.system('apt-get install man-db fail2ban')
     elif re.search(r'.*centos.*', dist, re.I):
         muralla_up = "etc/sysconfig/network-scripts"
+        os.system('yum install man-db fail2ban')
     ele = {
         'config': ['etc/muralla', 'muralla.conf'],
         'start_up': [muralla_up, 'muralla-up'],
