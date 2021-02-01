@@ -7,8 +7,10 @@ def main():
     dist = str(platform.linux_distribution()[0])
     if re.search(r'.*debian.*', dist, re.I):
         muralla_up = "etc/network/if-up.d"
+        os.system('apt-get install man-db')
     elif re.search(r'.*ubuntu.*', dist, re.I):
         muralla_up = "etc/network/if-up.d"
+        os.system('apt-get install man-db')
     elif re.search(r'.*centos.*', dist, re.I):
         muralla_up = "etc/sysconfig/network-scripts"
     ele = {
