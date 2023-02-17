@@ -2,18 +2,23 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-import platform
+import distro
+
 def main():
-    dist = str(platform.linux_distribution()[0])
+    dist = str(distro.linux_distribution()[0])
+    
     if re.search(r'.*debian.*', dist, re.I):
         muralla_up = "etc/network/if-up.d"
         os.system('apt-get install man-db fail2ban')
+    
     elif re.search(r'.*ubuntu.*', dist, re.I):
         muralla_up = "etc/network/if-up.d"
         os.system('apt-get install man-db fail2ban')
+    
     elif re.search(r'.*centos.*', dist, re.I):
         muralla_up = "etc/sysconfig/network-scripts"
         os.system('yum install man-db fail2ban')
+    
     ele = {
         'config': ['etc/muralla', 'muralla.conf'],
         'start_up': [muralla_up, 'muralla-up'],
@@ -24,13 +29,16 @@ def main():
         'man8_es': ['usr/share/man/es/man8', 'muralla.8.gz'],
         'example': ['usr/share/muralla', 'muralla.example.conf']
     }
+    
     for e in ele:
         if not os.path.exists('/%s' % ele[e][0]):
             newdir = '/%s' % ele[e][0]
             os.system('mkdir /%s' % newdir)
         os.system('cp %s/%s /%s/' % (ele[e][0], ele[e][1], ele[e][0]))
         os.system('mandb -q')
-    print ("Muralla was installed, for more information use: muralla -h")
-    print ("Also you can use: apropos muralla")
+    
+    print("Muralla was installed, for more information use: muralla -h")
+    print("Also you can use: apropos muralla")
+
 if __name__ == '__main__':
     main()
