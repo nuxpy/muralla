@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 ''' Desarrollado por: Félix Urbina <furbina@nuxpy.com>
     Creación 05/02/2019 - Félix Urbina
@@ -8,6 +8,7 @@
     Última revisión 07/07/2019 - Félix Urbina
     Última revisión 09/07/2019 - Félix Urbina
     Última revisión 25/07/2019 - Félix Urbina
+    Última revisión 17/02/2023 - Félix Urbina
 '''
 import os
 import sys
@@ -23,7 +24,7 @@ def get_chain(c=''):
     elif re.match(r'.*output.*', c, re.I):
         return 'OUTPUT'
     else:
-        print ("There is a problem with the chain, it's not exists.")
+        print("There is a problem with the chain, it's not exists.")
     return False
 
 def get_target(t=''):
@@ -34,7 +35,7 @@ def get_target(t=''):
     elif re.match(r'.*return.*', t, re.I):
         return 'RETURN'
     else:
-        print ("There is a problem with the target, it's not exists.")
+        print("There is a problem with the target, it's not exists.")
     return False
 
 def get_table(t=''):
@@ -49,7 +50,7 @@ def get_table(t=''):
     elif re.match('security', t, re.I):
         return 'security'
     else:
-        print ("There is a problem with the table, it's not exists.")
+        print("There is a problem with the table, it's not exists.")
     return False
 
 def clean_rules():
@@ -67,46 +68,46 @@ def list_rules():
     return os.system('%s -L -v' % cmd_iptables)
 
 def make_rule(dict_rule={}):
-    rule = ''
+    rule = []
     if 'table' in dict_rule:
-        rule += ' -t %s ' % dict_rule['table']
+        rule.append('-t %s' % dict_rule['table'])
     if 'ip_src' in dict_rule:
         if '!' not in dict_rule['ip_src']:
-            rule += ' -s %s ' % dict_rule['ip_src']
+            rule.append('-s %s' % dict_rule['ip_src'])
         else:
-            rule += ' ! -s %s ' % dict_rule['ip_src'].replace('!','')
+            rule.append('! -s %s' % dict_rule['ip_src'].replace('!',''))
     if 'ip_dst' in dict_rule:
         if '!' not in dict_rule['ip_dst']:
-            rule += ' -d %s ' % dict_rule['ip_dst']
+            rule.append('-d %s' % dict_rule['ip_dst'])
         else:
-            rule += ' ! -d %s ' % dict_rule['ip_dst'].replace('!','')
+            rule.append('! -d %s' % dict_rule['ip_dst'].replace('!',''))
     if 'net_in' in dict_rule:
         if '!' not in dict_rule['net_in']:
-            rule += ' -i %s ' % dict_rule['net_in']
+            rule.append('-i %s' % dict_rule['net_in'])
         else:
-            rule += ' ! -i %s ' % dict_rule['net_in'].replace('!','')
+            rule.append('! -i %s' % dict_rule['net_in'].replace('!',''))
     if 'net_out' in dict_rule:
         if '!' not in dict_rule['net_out']:
-            rule += ' -o %s ' % dict_rule['net_out']
+            rule.append('-o %s' % dict_rule['net_out'])
         else:
-            rule += ' ! -o %s ' % dict_rule['net_out'].replace('!','')
+            rule.append('! -o %s' % dict_rule['net_out'].replace('!',''))
     if 'proto' in dict_rule:
         if '!' not in dict_rule['proto']:
-            rule += ' -p %s ' % dict_rule['proto']
+            rule.append('-p %s' % dict_rule['proto'])
         else:
-            rule += ' ! -p %s ' % dict_rule['proto'].replace('!','')
+            rule.append('! -p %s' % dict_rule['proto'].replace('!',''))
     if 'port_src' in dict_rule:
-        rule += ' --sport %s ' % dict_rule['port_src']
+        rule.append('--sport %s' % dict_rule['port_src'])
     if 'port_dst' in dict_rule:
-        rule += ' --dport %s ' % dict_rule['port_dst']
+        rule.append('--dport %s' % dict_rule['port_dst'])
     if 'frag' in dict_rule:
         if '!' not in dict_rule['frag']:
-            rule += ' -f %s ' % dict_rule['frag']
+            rule.append('-f %s' % dict_rule['frag'])
         else:
-            rule += ' ! -f %s ' % dict_rule['frag'].replace('!','')
+            rule.append('! -f %s' % dict_rule['frag'].replace('!',''))
     if 'state' in dict_rule:
-        rule += ' -m state --state %s ' % dict_rule['state'].replace(' ','')
-    return rule
+        rule.append('-m state --state %s' % dict_rule['state'].replace(' ',''))
+    return '%s' % ' '.join(rule)
 
 def load_rules():
     global cmd_iptables, config_file
@@ -127,11 +128,11 @@ def load_rules():
     try:
         rules = json.loads(content)
     except:
-        print ("There is a problem with the configuration file, check the format.")
+        print("There is a problem with the configuration file, check the format.")
         return False
     rule_list = []
     if 'policy' not in rules:
-        print ("Must include policies in the configuration file.")
+        print("Must include policies in the configuration file.")
         return False
     for r in rules:
         if 'policy' not in r:
@@ -167,7 +168,7 @@ def uninstall():
     }
     for e in ele:
         os.system('rm -rf /%s' % ele[e])
-    print ("Muralla was uninstalled.")
+    print("Muralla was uninstalled.")
     return True
 
 def main(opt):
@@ -183,7 +184,7 @@ def main(opt):
     elif '-u' in opt:
         uninstall()
     else:
-        print ("""\n Insert a valid argument such as:\n
+        print("""\n Insert a valid argument such as:\n
     muralla -l      List rules running as firewall.
     muralla -c      Load rules of firewall.
     muralla -d      Delete or clean all of rules.
